@@ -75,8 +75,20 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
     responseTime
   } = currentResult?.results || {}
 
-  // Colors for charts
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d']
+  // Colors for charts - Update with Artillery-style colors
+  const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#F97316']
+
+  // Modern gradient colors for charts
+  const CHART_COLORS = {
+    primary: '#3B82F6',
+    primaryGradient: 'url(#primaryGradient)',
+    secondary: '#10B981', 
+    secondaryGradient: 'url(#secondaryGradient)',
+    success: '#10B981',
+    warning: '#F59E0B',
+    danger: '#EF4444',
+    purple: '#8B5CF6'
+  }
 
   // Prepare data for status codes pie chart
   const statusCodeData = Object.entries(httpStatusCodes || {}).map(([code, count], index) => ({
@@ -416,37 +428,92 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
               {/* Response Time Chart */}
               {timeSeries && timeSeries.length > 0 && (
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Response Time Over Time</h3>
+                <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                      <Activity className="w-5 h-5 mr-2 text-blue-500" />
+                      Response Time Over Time
+                    </h3>
+                    <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center">
+                        <div className="w-3 h-3 bg-blue-500 rounded-full mr-1"></div>
+                        Response Time
+                      </div>
+                      <div className="flex items-center">
+                        <div className="w-3 h-3 bg-green-500 rounded-full mr-1"></div>
+                        Active Users
+                      </div>
+                    </div>
+                  </div>
                   <div className="h-80">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={timeSeries}>
-                        <CartesianGrid strokeDasharray="3 3" stroke={document.documentElement.classList.contains('dark') ? '#374151' : '#e5e7eb'} />
-                        <XAxis dataKey="time" stroke={document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'} />
-                        <YAxis stroke={document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'} />
+                        <defs>
+                          <linearGradient id="primaryGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.1}/>
+                          </linearGradient>
+                          <linearGradient id="secondaryGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#10B981" stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor="#10B981" stopOpacity={0.1}/>
+                          </linearGradient>
+                          <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#000" floodOpacity="0.2"/>
+                          </filter>
+                        </defs>
+                        <CartesianGrid 
+                          strokeDasharray="3 3" 
+                          stroke={document.documentElement.classList.contains('dark') ? '#374151' : '#e5e7eb'} 
+                          strokeOpacity={0.6}
+                        />
+                        <XAxis 
+                          dataKey="time" 
+                          stroke={document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'}
+                          fontSize={12}
+                          tickLine={false}
+                          axisLine={{ stroke: document.documentElement.classList.contains('dark') ? '#4b5563' : '#d1d5db', strokeWidth: 1 }}
+                        />
+                        <YAxis 
+                          stroke={document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'}
+                          fontSize={12}
+                          tickLine={false}
+                          axisLine={{ stroke: document.documentElement.classList.contains('dark') ? '#4b5563' : '#d1d5db', strokeWidth: 1 }}
+                        />
                         <Tooltip 
                           contentStyle={{
-                            backgroundColor: document.documentElement.classList.contains('dark') ? '#374151' : '#ffffff',
-                            border: document.documentElement.classList.contains('dark') ? '1px solid #4b5563' : '1px solid #e5e7eb',
-                            color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827'
+                            backgroundColor: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff',
+                            border: 'none',
+                            borderRadius: '12px',
+                            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
+                            color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827',
+                            fontSize: '13px'
                           }}
+                          labelStyle={{ fontWeight: 600 }}
+                          cursor={{ stroke: '#3B82F6', strokeWidth: 1, strokeOpacity: 0.5 }}
                         />
-                        <Legend />
+                        <Legend 
+                          wrapperStyle={{ paddingTop: '20px' }}
+                          iconType="circle"
+                        />
                         <Line 
                           type="monotone" 
                           dataKey="responseTime" 
-                          stroke="#8884d8" 
+                          stroke="#3B82F6" 
                           strokeWidth={3}
                           name="Response Time (ms)"
-                          dot={{ fill: '#8884d8', strokeWidth: 2, r: 4 }}
+                          dot={{ fill: '#3B82F6', strokeWidth: 2, r: 5, filter: 'url(#shadow)' }}
+                          activeDot={{ r: 7, stroke: '#3B82F6', strokeWidth: 2, fill: '#ffffff' }}
+                          fill="url(#primaryGradient)"
                         />
                         <Line 
                           type="monotone" 
                           dataKey="activeUsers" 
-                          stroke="#82ca9d" 
+                          stroke="#10B981" 
                           strokeWidth={3}
                           name="Active Users"
-                          dot={{ fill: '#82ca9d', strokeWidth: 2, r: 4 }}
+                          dot={{ fill: '#10B981', strokeWidth: 2, r: 5, filter: 'url(#shadow)' }}
+                          activeDot={{ r: 7, stroke: '#10B981', strokeWidth: 2, fill: '#ffffff' }}
+                          fill="url(#secondaryGradient)"
                         />
                       </LineChart>
                     </ResponsiveContainer>
@@ -456,31 +523,56 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
 
               {/* HTTP Status Codes */}
               {statusCodeData.length > 0 && (
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">HTTP Status Codes Distribution</h3>
+                <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                      <CheckCircle className="w-5 h-5 mr-2 text-green-500" />
+                      HTTP Status Codes Distribution
+                    </h3>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      Total Requests: {statusCodeData.reduce((sum, item) => sum + item.value, 0)}
+                    </div>
+                  </div>
                   <div className="h-80">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
+                        <defs>
+                          <filter id="pieShadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="4" stdDeviation="4" floodColor="#000" floodOpacity="0.15"/>
+                          </filter>
+                        </defs>
                         <Pie
                           data={statusCodeData}
                           cx="50%"
                           cy="50%"
                           labelLine={false}
                           label={({ name, percent }) => `${name} ${(percent * 100).toFixed(1)}%`}
-                          outerRadius={100}
+                          outerRadius={110}
+                          innerRadius={40}
                           fill="#8884d8"
                           dataKey="value"
+                          stroke="none"
+                          filter="url(#pieShadow)"
                         >
                           {statusCodeData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
+                            <Cell 
+                              key={`cell-${index}`} 
+                              fill={entry.color}
+                              stroke={document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff'}
+                              strokeWidth={2}
+                            />
                           ))}
                         </Pie>
                         <Tooltip 
                           contentStyle={{
-                            backgroundColor: document.documentElement.classList.contains('dark') ? '#374151' : '#ffffff',
-                            border: document.documentElement.classList.contains('dark') ? '1px solid #4b5563' : '1px solid #e5e7eb',
-                            color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827'
+                            backgroundColor: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff',
+                            border: 'none',
+                            borderRadius: '12px',
+                            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
+                            color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827',
+                            fontSize: '13px'
                           }}
+                          labelStyle={{ fontWeight: 600 }}
                         />
                       </PieChart>
                     </ResponsiveContainer>
@@ -491,24 +583,69 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
 
             {/* Response Time Percentiles */}
             {responseTime && responseTime.length > 0 && (
-              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 mb-8">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Response Time Percentiles</h3>
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 mb-8 border border-gray-200 dark:border-gray-700 shadow-lg">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                    <Zap className="w-5 h-5 mr-2 text-yellow-500" />
+                    Response Time Percentiles
+                  </h3>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    Performance Analysis
+                  </div>
+                </div>
                 
                 {/* Chart */}
-                <div className="h-64 mb-6">
+                <div className="h-72 mb-6">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={responseTime}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={document.documentElement.classList.contains('dark') ? '#374151' : '#e5e7eb'} />
-                      <XAxis dataKey="percentile" stroke={document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'} />
-                      <YAxis stroke={document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'} />
+                    <BarChart data={responseTime} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                      <defs>
+                        <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8}/>
+                          <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.3}/>
+                        </linearGradient>
+                        <filter id="barShadow" x="-20%" y="-20%" width="140%" height="140%">
+                          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#000" floodOpacity="0.2"/>
+                        </filter>
+                      </defs>
+                      <CartesianGrid 
+                        strokeDasharray="3 3" 
+                        stroke={document.documentElement.classList.contains('dark') ? '#374151' : '#e5e7eb'} 
+                        strokeOpacity={0.6}
+                      />
+                      <XAxis 
+                        dataKey="percentile" 
+                        stroke={document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'}
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={{ stroke: document.documentElement.classList.contains('dark') ? '#4b5563' : '#d1d5db', strokeWidth: 1 }}
+                      />
+                      <YAxis 
+                        stroke={document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280'}
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={{ stroke: document.documentElement.classList.contains('dark') ? '#4b5563' : '#d1d5db', strokeWidth: 1 }}
+                        label={{ value: 'Response Time (ms)', angle: -90, position: 'insideLeft' }}
+                      />
                       <Tooltip 
                         contentStyle={{
-                          backgroundColor: document.documentElement.classList.contains('dark') ? '#374151' : '#ffffff',
-                          border: document.documentElement.classList.contains('dark') ? '1px solid #4b5563' : '1px solid #e5e7eb',
-                          color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827'
+                          backgroundColor: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff',
+                          border: 'none',
+                          borderRadius: '12px',
+                          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
+                          color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827',
+                          fontSize: '13px'
                         }}
+                        labelStyle={{ fontWeight: 600 }}
+                        cursor={{ fill: 'rgba(139, 92, 246, 0.1)' }}
                       />
-                      <Bar dataKey="value" fill="#8884d8" radius={[4, 4, 0, 0]} />
+                      <Bar 
+                        dataKey="value" 
+                        fill="url(#barGradient)" 
+                        radius={[6, 6, 0, 0]}
+                        filter="url(#barShadow)"
+                        stroke={document.documentElement.classList.contains('dark') ? '#6b46c1' : '#8b5cf6'}
+                        strokeWidth={1}
+                      />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -694,7 +831,7 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
                       if (performanceScore >= 0.8) {
                         // Excellent performance - minimal resource contention
                         scalabilityFactor = 1.6 + (performanceScore - 0.8) * 3 // 1.6-2.2x
-                        recommendation = 'ระบบมีประสิทธิภาพดีเยี่ยม สามารถรองรับผู้ใช้เพิ่มขึ้นได้อย่างมีประสิทธิภาพ'
+                        recommendation = 'ระบบมีประสิทธิภาพดีเยี่ยม สามารถรองรับผู้ใช้เพิ่มขึ้นได้อย่างมั่นใจ'
                         recommendationColor = 'green'
                       } else if (performanceScore >= 0.6) {
                         // Good performance - some resource pressure
@@ -778,7 +915,7 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
                 <div className="mt-6 bg-white dark:bg-gray-800 rounded-lg p-5 border border-gray-200 dark:border-gray-600">
                   <h4 className="text-md font-medium text-gray-800 dark:text-gray-200 mb-3 flex items-center">
                     <CheckCircle className="w-5 h-5 mr-2 text-green-600 dark:text-green-400" />
-                    แนวทางการประเมินและพยากรণ์ (มาตรฐาน DevOps)
+                    แนวทางการประเมินและพยากรณ์ (มาตรฐาน DevOps)
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800">
@@ -816,31 +953,80 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
             {/* Detailed Metrics */}
             {metrics && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Detailed Metrics</h3>
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                    <Activity className="w-5 h-5 mr-2 text-blue-500" />
+                    Detailed Metrics
+                  </h3>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    System Performance Details
+                  </div>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-                  <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600 shadow-sm">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <Clock className="w-5 h-5 text-indigo-500" />
+                      <div className="text-xs text-indigo-600 dark:text-indigo-400 font-medium px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 rounded-full">
+                        Duration
+                      </div>
+                    </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Duration</p>
-                    <p className="text-xl font-semibold text-gray-900 dark:text-white">{metrics.duration || 'N/A'}</p>
+                    <p className="text-xl font-bold text-gray-900 dark:text-white">{metrics.duration || 'N/A'}</p>
                   </div>
-                  <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600 shadow-sm">
+                  
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <Zap className="w-5 h-5 text-blue-500" />
+                      <div className="text-xs text-blue-600 dark:text-blue-400 font-medium px-2 py-1 bg-blue-50 dark:bg-blue-900/30 rounded-full">
+                        Rate
+                      </div>
+                    </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Requests/sec</p>
-                    <p className="text-xl font-semibold text-gray-900 dark:text-white">{metrics.requestRate || 'N/A'}</p>
+                    <p className="text-xl font-bold text-gray-900 dark:text-white">{metrics.requestRate || 'N/A'}</p>
                   </div>
-                  <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600 shadow-sm">
+                  
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <Download className="w-5 h-5 text-green-500" />
+                      <div className="text-xs text-green-600 dark:text-green-400 font-medium px-2 py-1 bg-green-50 dark:bg-green-900/30 rounded-full">
+                        In
+                      </div>
+                    </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Data Received</p>
-                    <p className="text-xl font-semibold text-gray-900 dark:text-white">{metrics.dataReceived || 'N/A'}</p>
+                    <p className="text-xl font-bold text-gray-900 dark:text-white">{metrics.dataReceived || 'N/A'}</p>
                   </div>
-                  <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600 shadow-sm">
+                  
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <Activity className="w-5 h-5 text-orange-500" />
+                      <div className="text-xs text-orange-600 dark:text-orange-400 font-medium px-2 py-1 bg-orange-50 dark:bg-orange-900/30 rounded-full">
+                        Out
+                      </div>
+                    </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Data Sent</p>
-                    <p className="text-xl font-semibold text-gray-900 dark:text-white">{metrics.dataSent || 'N/A'}</p>
+                    <p className="text-xl font-bold text-gray-900 dark:text-white">{metrics.dataSent || 'N/A'}</p>
                   </div>
-                  <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600 shadow-sm">
+                  
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <CheckCircle className="w-5 h-5 text-emerald-500" />
+                      <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium px-2 py-1 bg-emerald-50 dark:bg-emerald-900/30 rounded-full">
+                        Min
+                      </div>
+                    </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Min Response</p>
-                    <p className="text-xl font-semibold text-gray-900 dark:text-white">{metrics.minResponseTime || 'N/A'}<span className="text-sm text-gray-500 dark:text-gray-400">ms</span></p>
+                    <p className="text-xl font-bold text-gray-900 dark:text-white">{metrics.minResponseTime || 'N/A'}<span className="text-sm text-gray-500 dark:text-gray-400 ml-1">ms</span></p>
                   </div>
-                  <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600 shadow-sm">
+                  
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <AlertTriangle className="w-5 h-5 text-red-500" />
+                      <div className="text-xs text-red-600 dark:text-red-400 font-medium px-2 py-1 bg-red-50 dark:bg-red-900/30 rounded-full">
+                        Max
+                      </div>
+                    </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Max Response</p>
-                    <p className="text-xl font-semibold text-gray-900 dark:text-white">{metrics.maxResponseTime || 'N/A'}<span className="text-sm text-gray-500 dark:text-gray-400">ms</span></p>
+                    <p className="text-xl font-bold text-gray-900 dark:text-white">{metrics.maxResponseTime || 'N/A'}<span className="text-sm text-gray-500 dark:text-gray-400 ml-1">ms</span></p>
                   </div>
                 </div>
               </div>

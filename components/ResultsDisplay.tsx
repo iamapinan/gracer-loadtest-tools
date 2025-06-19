@@ -397,7 +397,7 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
                 <div className="flex items-center">
                   <CheckCircle className="w-10 h-10 text-green-600 dark:text-green-400 mr-4" />
                   <div>
-                    <p className="text-sm text-green-600 dark:text-green-400 font-medium">Total Requests</p>
+                    <p className="text-sm text-green-600 dark:text-green-400 font-medium">Total</p>
                     <p className="text-3xl font-bold text-green-700 dark:text-green-300">{summary?.requests || 0}</p>
                   </div>
                 </div>
@@ -417,7 +417,7 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
                 <div className="flex items-center">
                   <XCircle className="w-10 h-10 text-red-600 dark:text-red-400 mr-4" />
                   <div>
-                    <p className="text-sm text-red-600 dark:text-red-400 font-medium">Failed Requests</p>
+                    <p className="text-sm text-red-600 dark:text-red-400 font-medium">Failed</p>
                     <p className="text-3xl font-bold text-red-700 dark:text-red-300">{summary?.failed || 0}</p>
                   </div>
                 </div>
@@ -432,18 +432,8 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                       <Activity className="w-5 h-5 mr-2 text-blue-500" />
-                      Response Time Over Time
+                      Response Time
                     </h3>
-                    <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-blue-500 rounded-full mr-1"></div>
-                        Response Time
-                      </div>
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-green-500 rounded-full mr-1"></div>
-                        Active Users
-                      </div>
-                    </div>
                   </div>
                   <div className="h-80">
                     <ResponsiveContainer width="100%" height="100%">
@@ -499,20 +489,20 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
                           type="monotone" 
                           dataKey="responseTime" 
                           stroke="#3B82F6" 
-                          strokeWidth={3}
+                          strokeWidth={2}
                           name="Response Time (ms)"
-                          dot={{ fill: '#3B82F6', strokeWidth: 2, r: 5, filter: 'url(#shadow)' }}
-                          activeDot={{ r: 7, stroke: '#3B82F6', strokeWidth: 2, fill: '#ffffff' }}
+                          dot={{ fill: '#3B82F6', strokeWidth: 1, r: 3 }}
+                          activeDot={{ r: 3, stroke: '#3B82F6', strokeWidth: 1, fill: '#ffffff' }}
                           fill="url(#primaryGradient)"
                         />
                         <Line 
                           type="monotone" 
                           dataKey="activeUsers" 
                           stroke="#10B981" 
-                          strokeWidth={3}
+                          strokeWidth={2}
                           name="Active Users"
-                          dot={{ fill: '#10B981', strokeWidth: 2, r: 5, filter: 'url(#shadow)' }}
-                          activeDot={{ r: 7, stroke: '#10B981', strokeWidth: 2, fill: '#ffffff' }}
+                          dot={{ fill: '#10B981', strokeWidth: 1, r: 3 }}
+                          activeDot={{ r: 3, stroke: '#10B981', strokeWidth: 1, fill: '#ffffff' }}
                           fill="url(#secondaryGradient)"
                         />
                       </LineChart>
@@ -527,7 +517,7 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                       <CheckCircle className="w-5 h-5 mr-2 text-green-500" />
-                      HTTP Status Codes Distribution
+                      HTTP Status Codes
                     </h3>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
                       Total Requests: {statusCodeData.reduce((sum, item) => sum + item.value, 0)}
@@ -558,18 +548,16 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
                             <Cell 
                               key={`cell-${index}`} 
                               fill={entry.color}
-                              stroke={document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff'}
-                              strokeWidth={2}
                             />
                           ))}
                         </Pie>
                         <Tooltip 
                           contentStyle={{
-                            backgroundColor: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff',
+                            backgroundColor: '#ffffff',
                             border: 'none',
                             borderRadius: '12px',
                             boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
-                            color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827',
+                            color: '#111827',
                             fontSize: '13px'
                           }}
                           labelStyle={{ fontWeight: 600 }}
@@ -587,7 +575,7 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                     <Zap className="w-5 h-5 mr-2 text-yellow-500" />
-                    Response Time Percentiles
+                    Response Time %
                   </h3>
                   <div className="text-sm text-gray-500 dark:text-gray-400">
                     Performance Analysis
@@ -643,15 +631,13 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
                         fill="url(#barGradient)" 
                         radius={[6, 6, 0, 0]}
                         filter="url(#barShadow)"
-                        stroke={document.documentElement.classList.contains('dark') ? '#6b46c1' : '#8b5cf6'}
-                        strokeWidth={1}
                       />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
 
                 {/* Detailed Analysis */}
-                <div className="space-y-3">
+                <div className="space-x-2 flex flex-rows">
                   {responseTime.map((item: any, index: number) => {
                     const percentageText = item.percentile === 'p50' ? '50%' :
                                          item.percentile === 'p90' ? '90%' :
@@ -683,7 +669,7 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
                     const performance = getPerformanceLevel(item.percentile, item.value)
                     
                     return (
-                      <div key={index} className={`p-3 rounded-lg border-l-4 bg-${performance.color}-50 dark:bg-${performance.color}-900/20 border-${performance.color}-400`}>
+                      <div key={index} className={`p-3 rounded-lg bg-${performance.color}-50 dark:bg-${performance.color}-900/20 border-${performance.color}-400`}>
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center space-x-2">
                             <span className="text-lg">{performance.icon}</span>
@@ -784,7 +770,7 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
                               {(performanceScore * 100).toFixed(0)}/100
                             </span>
                           </div>
-                          <div className={`mt-4 p-3 rounded-lg bg-${level.color}-50 dark:bg-${level.color}-900/20 border border-${level.color}-200 dark:border-${level.color}-800`}>
+                          <div className={`mt-4 p-3 rounded-lg bg-${level.color}-50 dark:bg-${level.color}-900/20`}>
                             <p className={`text-sm text-${level.color}-700 dark:text-${level.color}-300 font-medium flex items-center`}>
                               <span className="mr-2">{level.icon}</span>
                               ประสิทธิภาพระบบ: {level.text}
@@ -895,7 +881,7 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
                               </span>
                             </div>
                           )}
-                          <div className={`mt-4 p-3 rounded-lg bg-${recommendationColor}-50 dark:bg-${recommendationColor}-900/20 border border-${recommendationColor}-200 dark:border-${recommendationColor}-800`}>
+                          <div className={`mt-4 p-3 rounded-lg bg-${recommendationColor}-50 dark:bg-${recommendationColor}-900/20`}>
                             <p className={`text-sm text-${recommendationColor}-700 dark:text-${recommendationColor}-300 font-medium`}>
                               📊 {recommendation}
                             </p>
@@ -918,7 +904,7 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
                     แนวทางการประเมินและพยากรณ์ (มาตรฐาน DevOps)
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                    <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800">
+                    <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
                       <div className="font-medium text-green-800 dark:text-green-200 mb-1">🚀 ดีเยี่ยม (Score ≥ 80)</div>
                       <div className="text-green-700 dark:text-green-300">
                         • Response time p95 &lt; 300ms<br/>
@@ -927,7 +913,7 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
                         • แนะนำ: เพิ่มโหลดได้อย่างมั่นใจ
                       </div>
                     </div>
-                    <div className="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                    <div className="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg">
                       <div className="font-medium text-yellow-800 dark:text-yellow-200 mb-1">⚠️ ควรระวัง (Score 40-60)</div>
                       <div className="text-yellow-700 dark:text-yellow-300">
                         • Response time p95 300ms-1.5s<br/>
@@ -936,7 +922,7 @@ export default function ResultsDisplay({ results, isLoading, onClearResults, onR
                         • แนะนำ: เพิ่มโหลดอย่างระมัดระวัง
                       </div>
                     </div>
-                    <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800">
+                    <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
                       <div className="font-medium text-red-800 dark:text-red-200 mb-1">🚨 ต้องปรับปรุง (Score &lt; 40)</div>
                       <div className="text-red-700 dark:text-red-300">
                         • Response time p95 &gt; 1.5s<br/>
